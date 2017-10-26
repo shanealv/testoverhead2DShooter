@@ -1,5 +1,5 @@
 # Installation
-First, **make sure** you have git install!
+First, **make sure** you have git-lfs installed!
 ```
 git lfs install
 ```
