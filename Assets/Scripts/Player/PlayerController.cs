@@ -9,36 +9,60 @@ using static RedWoods.Util.Range;
 //{
 public class PlayerController : MonoBehaviour
 {
+    public int playerid = -1;
+    public float speedModifier = 1;
+
     private IUserInputService userInputService;
     private ITimeService timeService;
+
     private int health;
     private int maxHealth = 3;
     private float invincibilityTime = 3f;
     private float lastDamageTime = 0;
-    public int playerid = -1;
-    public float speedModifier = 1;
     private bool facingRight = false;
 
+    /// <summary>
+    /// Time (in seconds) for which a player is invincible post-damage.
+    /// Range: [0.0f, 5.0f]
+    /// </summary>
     public float InvincibilityTime
     {
         get { return invincibilityTime; }
         set { invincibilityTime = Limit(value, 0, 5); }
     }
 
+    /// <summary>
+    /// The maximum health this player can have.
+    /// Range: [2, 5]
+    /// </summary>
     public int MaxHealth
     {
         get { return maxHealth; }
         set { maxHealth = Limit(value, 2, 5); }
     }
 
+    /// <summary>
+    /// The current health of the player.  When set to zero, the player is killed.
+    /// Range: [0, MaxHealth]
+    /// </summary>
     public int Health
     {
         get { return health; }
-        set { health = Limit(value, 0, maxHealth); }
+        set
+        {
+            bool wasAlive = health > 0;
+            health = Limit(value, 0, maxHealth);
+            if (wasAlive && health == 0)
+                Kill();
+        }
     }
 
+    /// <summary>
+    /// Notifies on player death
+    /// </summary>
     public event EventHandler OnDeath;
 
+    // Used by ZenJect for Dependency Injection
     [Inject]
     public void Construct(IUserInputService _userInputService, ITimeService _timeService)
     {
@@ -65,6 +89,10 @@ public class PlayerController : MonoBehaviour
             Flip();
     }
 
+    /// <summary>
+    /// Flips the direction the player is facing.
+    /// Also inverts the scale of the player to flip sprites
+    /// </summary>
     public void Flip()
     {
         facingRight = !facingRight;
@@ -73,6 +101,9 @@ public class PlayerController : MonoBehaviour
         transform.localScale = newScale;
     }
 
+    /// <summary>
+    /// Applies a single point of damage to the player
+    /// </summary>
     public void Damage()
     {
         float time = timeService.GetTime();
@@ -80,8 +111,6 @@ public class PlayerController : MonoBehaviour
         {
             lastDamageTime = time;
             Health--;
-            if (Health == 0)
-                Kill();
         }
     }
 

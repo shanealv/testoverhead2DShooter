@@ -8,6 +8,10 @@ namespace RedWoods.Service
 {
     public interface ITimeService
     {
+        /// <summary>
+        /// Gets the current time in seconds since the game start.
+        /// </summary>
+        /// <returns></returns>
         float GetTime();
     }
 }
