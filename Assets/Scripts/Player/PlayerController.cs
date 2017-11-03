@@ -114,6 +114,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void LateUpdate()
+    {
+        GetComponent<SpriteRenderer>().sortingOrder = -(int)(transform.position.y * 100);
+    }
+
     public void Kill()
     {
         OnDeath?.Invoke(this, null);
